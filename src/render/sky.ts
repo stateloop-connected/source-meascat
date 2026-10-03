@@ -19,7 +19,7 @@ export function createSky(): THREE.Mesh {
         #include <colorspace_fragment>
       }`,
   });
-  const sky = new THREE.Mesh(new THREE.SphereGeometry(300, 32, 16), mat);
+  const sky = new THREE.Mesh(new THREE.SphereGeometry(150, 32, 16), mat);
   sky.renderOrder = -1;
   sky.frustumCulled = false;
   return sky;
