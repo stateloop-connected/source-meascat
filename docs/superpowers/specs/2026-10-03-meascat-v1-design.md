@@ -122,12 +122,12 @@ There is **no in-game text**. Guidance comes from icons and from companions poin
 | 8 | Chapter 3 | Follow the heron's scouted path, or your own | trust |
 | 9 | Chapter 3 | Jump into the water to save a friend, or wait for the otter | trust and courage |
 
-- **Ending rule (pure, unit-tested).** Kindness `k` counts from 0 to 6 and trust `t` from 0 to 3.
+- **Ending rule (pure, unit-tested).** Kindness `k` counts from 0 to 5 (choices 1, 2, 3, 5 and 7) and trust `t` from 0 to 3 (choices 4, 8 and 9).
 
 | Ending | Condition | What happens |
 |---|---|---|
-| **Together** | k ≥ 5 and t ≥ 2 | Everyone on the Ark at dawn, with the animals you helped swimming alongside. The bell calls the water back to a green valley |
-| **Alone at sea** | k ≤ 2 and t ≤ 1 | The friends drift off to their own homes. Meascat sails on alone toward a new light: bittersweet, never punishing |
+| **Together** | k ≥ 4 and t ≥ 2 | Everyone on the Ark at dawn, with the animals you helped swimming alongside. The bell calls the water back to a green valley |
+| **Alone at sea** | k ≤ 1 and t ≤ 1 | The friends drift off to their own homes. Meascat sails on alone toward a new light: bittersweet, never punishing |
 | **Home** | otherwise | The water recedes. The friends rest on the hill, and Meascat looks out to sea, with a hint of more to come |
 
 ## 7. Art direction
