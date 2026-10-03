@@ -30,6 +30,7 @@ export class KeyboardInput {
   private jump = false;
   private readonly onDown = (e: Event) => {
     const k = e as KeyboardEvent;
+    if (k.metaKey || k.ctrlKey || k.altKey) return; // leave browser shortcuts alone (and never get stuck walking)
     if (k.code === 'Space') {
       if (!k.repeat) this.jump = true;
       k.preventDefault?.();

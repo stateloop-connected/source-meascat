@@ -111,9 +111,30 @@ describe('cat controller', () => {
     expect(s.lastSafe.y).toBeCloseTo(0.6, 6);
   });
 
-  it('a huge time step cannot tunnel through the wall (each step is one fixed STEP)', () => {
+  it('at full speed right next to a thin wall, 5 capped steps never pass through it', () => {
+    const thin: World = { waterY: -5, boxes: [box(-5, -1, -5, 5, 0, 5), box(-5, 0, 1, 5, 2, 1.02)] };
+    let s: CatState = { ...initCat(v3(0, 0, 0.74)), onGround: true, vel: v3(0, 0, CAT.speed) };
+    for (let i = 0; i < 5; i++) s = stepCat(s, { x: 0, z: 1, jump: false }, STEP, thin).state;
+    expect(s.pos.z).toBeLessThanOrEqual(1 - CAT.radius + 1e-6);
+  });
+
+  it('respawns with the whole body on solid ground, not hanging over the edge', () => {
     let s = start();
-    for (let i = 0; i < 5; i++) s = stepCat(s, { x: 0, z: 1, jump: false }, STEP, world).state;
-    expect(s.pos.z).toBeLessThan(3);
+    const events: string[] = [];
+    for (let i = 0; i < 400 && !events.includes('respawn'); i++) {
+      const r = stepCat(s, { x: 1, z: 0, jump: false }, STEP, world);
+      s = r.state;
+      events.push(...r.events);
+    }
+    expect(events).toContain('respawn');
+    expect(s.pos.x).toBeLessThanOrEqual(5 - CAT.radius + 1e-6);
+  });
+
+  it('grazing a box corner keeps most of the speed instead of stopping dead', () => {
+    const corner: World = { waterY: -5, boxes: [box(-10, -1, -10, 10, 0, 10), box(1, 0, 0.21, 3, 2, 3)] };
+    let s: CatState = { ...initCat(v3(0, 0, 0)), onGround: true, vel: v3(CAT.speed, 0, 0) };
+    for (let i = 0; i < 40; i++) s = stepCat(s, { x: 1, z: 0, jump: false }, STEP, corner).state;
+    expect(s.pos.x).toBeGreaterThan(1.8);
+    expect(Math.hypot(s.vel.x, s.vel.z)).toBeGreaterThan(CAT.speed * 0.6);
   });
 });

@@ -58,8 +58,9 @@ async function session(label, launch, ctxOpts, mobile) {
   const vp = p.viewportSize();
   await p.setViewportSize({ width: vp.height, height: vp.width });
   await p.waitForTimeout(500);
-  const size = await p.evaluate(() => [document.querySelector('canvas').clientWidth, innerWidth]);
-  check(`${label}: canvas follows a resize`, size[0] === size[1]);
+  const v = await p.evaluate(() => window.__meascat.view());
+  const okView = Math.abs(v.aspect - v.cssW / v.cssH) < 1e-3 && Math.abs(v.bufferW - Math.floor(v.cssW * v.pr)) <= 1 && (v.depthW === null || Math.abs(v.depthW - Math.floor(v.cssW * v.pr)) <= 1);
+  check(`${label}: canvas, camera aspect and depth target follow a resize`, okView, JSON.stringify(v));
   await p.setViewportSize(vp);
   await p.waitForTimeout(800);
 

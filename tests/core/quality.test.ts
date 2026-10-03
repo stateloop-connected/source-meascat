@@ -27,4 +27,18 @@ describe('quality', () => {
     for (let i = 0; i < 90; i++) changed = g.push(9) ?? changed;
     expect(changed).toBe('medium');
   });
+  it('ignores frame gaps over 250 ms (a hidden tab is not slowness)', () => {
+    const g = new QualityGovernor('high', 30);
+    for (let i = 0; i < 29; i++) g.push(16);
+    expect(g.push(10000)).toBeNull();
+    for (let i = 0; i < 60; i++) expect(g.push(16)).toBeNull();
+    expect(g.level).toBe('high');
+  });
+  it('reset() starts a fresh window', () => {
+    const g = new QualityGovernor('high', 30);
+    for (let i = 0; i < 29; i++) g.push(40);
+    g.reset();
+    expect(g.push(40)).toBeNull();
+    expect(g.level).toBe('high');
+  });
 });

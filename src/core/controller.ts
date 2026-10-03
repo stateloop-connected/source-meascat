@@ -84,8 +84,19 @@ export function stepCat(s: CatState, input: MoveInput, dt: number, world: World)
   const tx = s.pos.x + vel.x * dt;
   const tz = s.pos.z + vel.z * dt;
   const p = pushOut(world.boxes, tx, tz, CAT.radius, s.pos.y, CAT.height, CAT.step);
-  if (Math.abs(p.x - tx) > 1e-9) vel.x = 0;
-  if (Math.abs(p.z - tz) > 1e-9) vel.z = 0;
+  // Slide along walls and corners: remove only the part of the velocity that points into the surface.
+  const px = p.x - tx;
+  const pz = p.z - tz;
+  const pl = Math.hypot(px, pz);
+  if (pl > 1e-9) {
+    const nx = px / pl;
+    const nz = pz / pl;
+    const into = vel.x * nx + vel.z * nz;
+    if (into < 0) {
+      vel.x -= nx * into;
+      vel.z -= nz * into;
+    }
+  }
 
   // Vertical move: ceilings, then ground (including step-ups and small step-downs).
   let ny = s.pos.y + vel.y * dt;
@@ -111,7 +122,9 @@ export function stepCat(s: CatState, input: MoveInput, dt: number, world: World)
 
   const pos = { x: p.x, y: ny, z: p.z };
   let lastSafe = s.lastSafe;
-  if (onGround && ny > world.waterY + 0.05 && groundHeight(world.boxes, p.x, p.z, 0, ny, 1e-6) === ny) lastSafe = { ...pos };
+  // Safe ground for respawning: dry, and the whole body (not just its centre) stands on one box top.
+  const fully = world.boxes.some((b) => Math.abs(b.max.y - ny) < 1e-6 && p.x - CAT.radius >= b.min.x && p.x + CAT.radius <= b.max.x && p.z - CAT.radius >= b.min.z && p.z + CAT.radius <= b.max.z);
+  if (onGround && ny > world.waterY + 0.05 && fully) lastSafe = { ...pos };
 
   if (pos.y < world.waterY - CAT.sink) {
     events.push('splash');

@@ -57,7 +57,8 @@ export function createWater(waterY: number, q: QualitySettings) {
           float foam = (1.0 - smoothstep(0.0, 0.32 + 0.12 * wob, diff));
           col = mix(col, uFoamColor, foam * 0.85);
         }
-        float f = smoothstep(uFogNear, uFogFar, length(cameraPosition - vW));
+        float fd = max(length(cameraPosition - vW) - uFogNear, 0.0) / max(uFogFar - uFogNear, 0.001);
+  float f = 1.0 - exp(-fd * fd * 3.0); // exponential mist
         gl_FragColor = vec4(mix(col, uFogColor, f), 1.0);
         #include <colorspace_fragment>
       }`,

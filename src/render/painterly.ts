@@ -25,7 +25,8 @@ void main() {
   float rim = pow(1.0 - clamp(dot(n, v), 0.0, 1.0), 3.0) * smoothstep(-0.2, 0.6, ndl);
   col += uRim * rim * 0.35;
   col += (hash(gl_FragCoord.xy) - 0.5) * 0.035 * uGrain;  // hand-made grain
-  float f = smoothstep(uFogNear, uFogFar, length(cameraPosition - vW));
+  float fd = max(length(cameraPosition - vW) - uFogNear, 0.0) / max(uFogFar - uFogNear, 0.001);
+  float f = 1.0 - exp(-fd * fd * 3.0); // exponential mist
   gl_FragColor = vec4(mix(col, uFogColor, f), 1.0);
   #include <colorspace_fragment>
 }`;

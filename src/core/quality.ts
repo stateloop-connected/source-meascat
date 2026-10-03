@@ -27,7 +27,13 @@ export class QualityGovernor {
     public level: Quality,
     private readonly window = 90,
   ) {}
+  /** Starts a fresh measuring window (e.g. after the tab was hidden). */
+  reset(): void {
+    this.samples = [];
+    this.fastWindows = 0;
+  }
   push(frameMs: number): Quality | null {
+    if (!(frameMs > 0) || frameMs > 250) return null; // a hidden tab or a stall is not slowness
     this.samples.push(frameMs);
     if (this.samples.length < this.window) return null;
     const avg = this.samples.reduce((a, b) => a + b, 0) / this.samples.length;

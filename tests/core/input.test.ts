@@ -41,4 +41,13 @@ describe('KeyboardInput', () => {
     expect(kb.axes()).toEqual({ ix: 0, iz: 0 });
     kb.destroy();
   });
+  it('ignores keys pressed with Cmd/Ctrl/Alt (no stuck walking after a shortcut)', () => {
+    const kb = new KeyboardInput(window);
+    window.dispatchEvent(new KeyboardEvent('keydown', { code: 'KeyD', metaKey: true }));
+    window.dispatchEvent(new KeyboardEvent('keydown', { code: 'KeyS', ctrlKey: true }));
+    window.dispatchEvent(new KeyboardEvent('keydown', { code: 'Space', altKey: true }));
+    expect(kb.axes()).toEqual({ ix: 0, iz: 0 });
+    expect(kb.consumeJump()).toBe(false);
+    kb.destroy();
+  });
 });
