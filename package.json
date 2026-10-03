@@ -1,0 +1,29 @@
+{
+  "name": "meascat",
+  "private": true,
+  "version": "0.1.0",
+  "type": "module",
+  "description": "A wordless, painterly web game about a small cat who is afraid of water.",
+  "license": "MIT",
+  "scripts": {
+    "dev": "vite",
+    "build": "tsc --noEmit && vite build",
+    "preview": "vite preview",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "typecheck": "tsc --noEmit",
+    "qa:smoke": "node tools/qa/smoke.mjs"
+  },
+  "devDependencies": {
+    "@types/node": "^26.6.4",
+    "@types/three": "^0.186.0",
+    "happy-dom": "^20.14.5",
+    "playwright-core": "^1.63.0",
+    "typescript": "^7.0.2",
+    "vite": "^8.3.2",
+    "vitest": "^5.0.3"
+  },
+  "dependencies": {
+    "three": "^0.186.1"
+  }
+}
